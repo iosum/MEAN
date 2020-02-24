@@ -1,0 +1,14 @@
+<h1>Projects lists</h1>
+
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Project</th>
+        <th>Description</th>
+    </thead>
+    {{#each projects}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.description}}</td>
+        </tr>
+    {{/each}}
+</table>
