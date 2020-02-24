@@ -6,11 +6,13 @@
     <thead>
         <th>Project</th>
         <th>Description</th>
+        <th> </th>
     </thead>
     {{#each projects}}
         <tr>
             <td>{{this.name}}</td>
             <td>{{this.description}}</td>
+            <td><a href="/projects/delete/{{this._id}}" class="text-danger" onclick="return confirmDelete();">Delete</a></td>
         </tr>
     {{/each}}
 </table>

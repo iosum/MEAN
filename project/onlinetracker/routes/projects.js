@@ -28,7 +28,7 @@ router.get('/add',(req, res, next) => {
 router.post('/add',(req, res, next) => {
    // create a new document in the projects collection using the project model
     Project.create({
-        // get the data from the form
+        // get the data from the form and store it in the mongodb
         name: req.body.projectName,
         description: req.body.projectDescription
     }, (err, newProject)=> {
@@ -43,6 +43,21 @@ router.post('/add',(req, res, next) => {
             res.redirect('/projects');
         }
     })
+});
+
+// GET /projects/delete/foo
+// :_id means this method expects a parameter called "_id"
+router.get('/delete/:_id', (req, res, next) => {
+   // use the mongoose model to delete the selected document
+   // http requests has a parameter called _id, and we can access it through it's attribute which is params
+   Project.remove({_id: req.params._id}, (err) => {
+       if(err) {
+           console.log(err);
+       }
+       else {
+           res.redirect('/projects');
+       }
+   });
 });
 
 // make the controller public
