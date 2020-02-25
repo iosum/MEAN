@@ -7,9 +7,16 @@ const bodyParser = require('body-parser');
 const User = require('../models/user');
 
 
+
+
+
 /* GET home page. */
 router.get('/', (req, res, next) => {
-    res.render('index', {title: 'Online Tracker'});
+    res.render('index', {
+        title: 'Online Tracker',
+        user: req.user
+        });
+
 });
 
 
@@ -17,21 +24,15 @@ router.get('/', (req, res, next) => {
 router.get('/about', (req, res) => {
     res.render('about', {
         title: 'About us',
-        projects: [{
-            name: 'ajax-php'
-        }, {
-            name: 'Java-Printer'
-        }, {
-            name: 'MEAN'
-        }, {
-            name: 'DSA'
-        }]
+        user: req.user
     });
 });
 
 // GET /register
 router.get('/register', ((req, res, next) => {
-    res.render('register');
+    res.render('register',{
+        user: req.user
+    });
 }));
 
 
@@ -44,7 +45,8 @@ router.get('/login', ((req, res, next) => {
 
     res.render('login', {
         title: "Please Login",
-        messages: messages
+        messages: messages,
+        user: req.user
     });
 }));
 
@@ -69,7 +71,8 @@ router.post('/register', (req, res) => {
     }), req.body.password, (err, user) => {
         if (err) {
             res.render('register', {
-                message: err
+                message: err,
+                user: req.user
             });
         } else {
             // password has a method to automatically log the user in
@@ -81,5 +84,10 @@ router.post('/register', (req, res) => {
     });
 });
 
+// GET /logout
+router.get('/logout',(req, res, next) => {
+    req.logout();
+    res.redirect('/');
+});
 
 module.exports = router;

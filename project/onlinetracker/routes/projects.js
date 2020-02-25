@@ -14,19 +14,25 @@ const passport = require('passport');
 // add body-parser to parse the response of the body
 const bodyParser = require('body-parser');
 
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        // user is logged in already so continue to the next function
+        return next();
+    }
+    res.redirect('/login');
+}
 
-// GET project page
-router.get('/', (req, res, next) => {
+
+// GET /projects
+router.get('/', isLoggedIn, (req, res, next) => {
     // use the Project model & mongoose to select(read) all the projects from MongoDB
     Project.find((err, projects) => {
-        console.log(req)
+        console.log(req);
         if (err) {
             console.log(err);
         } else {
-
             // load the main projects page
             res.render('projects/index', {
-
                 projects: projects,
                 user: req.body.username
             });
@@ -34,10 +40,13 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.get('/add', (req, res, next) => {
+/**
+ *  GET /projects/add
+ */
+router.get('/add', isLoggedIn,(req, res, next) => {
     // load the add view
     // get the list of clients for the dropdown
-    Client.find( (err, clients) => {
+    Client.find((err, clients) => {
         if (err) {
             console.log(err);
         } else {
@@ -49,7 +58,7 @@ router.get('/add', (req, res, next) => {
 
 });
 
-router.post('/add', (req, res, next) => {
+router.post('/add',isLoggedIn, (req, res, next) => {
     // create a new document in the projects collection using the project model
     Project.create({
         // get the data from the form and store it in the mongodb
@@ -71,7 +80,7 @@ router.post('/add', (req, res, next) => {
 
 // GET /projects/delete/foo
 // :_id means this method expects a parameter called "_id"
-router.get('/delete/:_id', (req, res, next) => {
+router.get('/delete/:_id',isLoggedIn, (req, res, next) => {
     // use the mongoose model to delete the selected document
     // http requests has a parameter called _id, and we can access it through it's attribute which is params
     Project.remove({_id: req.params._id}, (err) => {
@@ -84,7 +93,7 @@ router.get('/delete/:_id', (req, res, next) => {
 });
 
 // GET /projects/edit/:_id : display the populated edit form
-router.get('/edit/:_id', (req, res, next) => {
+router.get('/edit/:_id',isLoggedIn, (req, res, next) => {
     Project.findById(req.params._id, (err, project) => {
         if (err) {
             console.log(err);
@@ -97,7 +106,7 @@ router.get('/edit/:_id', (req, res, next) => {
 });
 
 
-router.post('/edit/:_id', (req, res, next) => {
+router.post('/edit/:_id',isLoggedIn, (req, res, next) => {
     Project.findOneAndUpdate({
             _id: req.params._id
         },
