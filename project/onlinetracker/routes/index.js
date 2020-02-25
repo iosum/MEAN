@@ -7,15 +7,12 @@ const bodyParser = require('body-parser');
 const User = require('../models/user');
 
 
-
-
-
 /* GET home page. */
 router.get('/', (req, res, next) => {
     res.render('index', {
         title: 'Online Tracker',
         user: req.user
-        });
+    });
 
 });
 
@@ -30,7 +27,7 @@ router.get('/about', (req, res) => {
 
 // GET /register
 router.get('/register', ((req, res, next) => {
-    res.render('register',{
+    res.render('register', {
         user: req.user
     });
 }));
@@ -85,9 +82,26 @@ router.post('/register', (req, res) => {
 });
 
 // GET /logout
-router.get('/logout',(req, res, next) => {
+router.get('/logout', (req, res, next) => {
     req.logout();
     res.redirect('/');
 });
+
+
+// GET :/google
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}));
+
+// GET: /google/callback
+router.get('/google/callback', passport.authenticate('google', {
+    failureRedirect: '/login',
+    failureMessage: 'Invalid login',
+    scope: 'email'
+}),
+    (req, res, next) => {
+        res.redirect('/projects');
+    }
+);
 
 module.exports = router;
