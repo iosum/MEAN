@@ -1,9 +1,9 @@
 <h1>Projects lists</h1>
 
 <!--if we have a valid user, show "add a new project" link-->
-{{#unless user}}
+{{#if user}}
     <a href="/projects/add">Add a new project</a>
-{{/unless}}
+{{/if}}
 
 
 <table class="table table-hover table-striped">

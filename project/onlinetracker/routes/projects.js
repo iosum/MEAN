@@ -34,7 +34,7 @@ router.get('/', isLoggedIn, (req, res, next) => {
             // load the main projects page
             res.render('projects/index', {
                 projects: projects,
-                user: req.body.username
+                user: req.user
             });
         }
     });
@@ -99,7 +99,8 @@ router.get('/edit/:_id',isLoggedIn, (req, res, next) => {
             console.log(err);
         } else {
             res.render('projects/edit', {
-                project: project
+                project: project,
+                user: req.user
             });
         }
     });
