@@ -1,6 +1,10 @@
 <h1>Projects lists</h1>
 
-<a href="/projects/add">Add a new project</a>
+<!--if we have a valid user, show "add a new project" link-->
+{{#unless user}}
+    <a href="/projects/add">Add a new project</a>
+{{/unless}}
+
 
 <table class="table table-hover table-striped">
     <thead>

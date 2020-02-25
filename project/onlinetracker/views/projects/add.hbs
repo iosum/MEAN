@@ -9,6 +9,14 @@
             <label for="projectDescription">Project Description</label>
             <input type="text" name="projectDescription" id="projectDescription">
         </div>
+        <div>
+            <label for="client">Client</label>
+            <select name="client" id="client">
+                {{#each clients}}
+                    <option>{{this.lastName}}</option>
+                {{/each}}
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Add</button>
     </div>
 </form>

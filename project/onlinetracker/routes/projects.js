@@ -5,15 +5,30 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Project = require('../models/project');
 
+// add the clients model to get the client collections
+const Client = require('../models/client');
+
+// add passport to check user authentication
+const passport = require('passport');
+
+// add body-parser to parse the response of the body
+const bodyParser = require('body-parser');
+
+
+// GET project page
 router.get('/', (req, res, next) => {
     // use the Project model & mongoose to select(read) all the projects from MongoDB
     Project.find((err, projects) => {
+        console.log(req)
         if (err) {
             console.log(err);
         } else {
+
             // load the main projects page
             res.render('projects/index', {
-                projects: projects
+
+                projects: projects,
+                user: req.body.username
             });
         }
     });
@@ -21,7 +36,17 @@ router.get('/', (req, res, next) => {
 
 router.get('/add', (req, res, next) => {
     // load the add view
-    res.render('projects/add')
+    // get the list of clients for the dropdown
+    Client.find( (err, clients) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render('projects/add', {
+                clients: clients
+            });
+        }
+    });
+
 });
 
 router.post('/add', (req, res, next) => {

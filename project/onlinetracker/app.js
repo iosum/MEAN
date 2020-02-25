@@ -7,12 +7,23 @@ const logger = require('morgan');
 // import mongoose for db connection
 const mongoose = require('mongoose');
 
+// passport references for auth
+const passport = require('passport');
+const session = require('express-session');
 
+// import the body parser
+const bodyParser = require('body-parser');
 
+/**
+ * controllers
+ * @type {Router}
+ */
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 // add reference to the project controller
 const projectsRouter = require('./routes/projects');
+// add reference to the client controller
+const clientsRouter = require('./routes/clients');
 
 
 const app = express();
@@ -23,20 +34,21 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+//app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({extended: true}));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-// map any urls starting with /projects to be handled by the projects controller
-app.use('/projects', projectsRouter);
 
-// db connection
+
+
+/**
+ * db connection
+ * @type {{db: string}}
+ */
 const globals = require('./config/globals');
 
 // set up a few options as json object
-
 mongoose.connect(globals.db, {
   useNewUrlParser : true,
   useUnifiedTopology : true
@@ -47,6 +59,44 @@ mongoose.connect(globals.db, {
 ).catch(() => {
   console.log('404');
 });
+
+
+/**
+ * passport configuration
+ */
+
+// passport auth config
+// 1. set up a session management
+app.use(session({
+    secret: '12222rrrrrr',
+    resave: true,
+    saveUninitialized: false
+}));
+
+// 2. initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 3. link passport to the User model
+const User = require('./models/user');
+passport.use(User.createStrategy());
+
+// 4. set up password to read/write user data to/from the session object
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+app.use('/users', usersRouter);
+// map any urls starting with /projects to be handled by the projects controller
+app.use('/projects', projectsRouter);
+// map any urls starting with /clients to be handled by the clients controller
+app.use('/clients', clientsRouter);
+app.use('/', indexRouter);
+
+
+/**
+ * express generator default error handler
+ */
 
 
 // catch 404 and forward to error handler
